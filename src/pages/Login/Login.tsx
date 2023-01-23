@@ -1,5 +1,6 @@
 import { FC, useState } from 'react';
 import axios from 'axios';
+import { notification } from 'antd';
 
 const Login: FC = () => {
     const [email, setEmail] = useState<string>("")
@@ -10,9 +11,14 @@ const Login: FC = () => {
         setPassword("")
     }
     const handleSubmit = async () => {
-        const { data: { token } } = await axios.post("http://localhost:5000/auth/signin", { email, password })
-        if (token) {
-            sessionStorage.setItem("user", token)
+        try {
+            const { data: { token } } = await axios.post("http://localhost:5000/auth/signin", { email, password })
+            if (token) {
+                sessionStorage.setItem("user", token)
+                notification.success({ message: "Login Succesfull" })
+            }
+        } catch (error: any) {
+            notification.error({ message: "Invalid Credetials" })
         }
         clearFields()
     }

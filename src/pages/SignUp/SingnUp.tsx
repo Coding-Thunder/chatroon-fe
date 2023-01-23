@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { FC, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { notification } from 'antd';
 
 const SingnUp: FC = () => {
 
@@ -15,9 +16,16 @@ const SingnUp: FC = () => {
         setPassword("")
     }
     const handleSubmit = async () => {
-        const { data: { token } } = await axios.post("http://localhost:5000/auth/signup", { fullName: name, email, password });
-        if (token) navigate("/login")
-        clearFields()
+        try {
+            const { data: { token } } = await axios.post("http://localhost:5000/auth/signup", { fullName: name, email, password });
+            if (token) {
+                notification.success({ message: "Sign up Successfull" })
+                navigate("/login")
+            }
+            clearFields()
+        } catch (error: any) {
+            notification.error({ message: "User Already Exists" })
+        }
     }
     return (
         <div>
